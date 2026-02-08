@@ -1,0 +1,1171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Comparison Tool</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #feca57);
+        }
+        
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 2.8rem;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .tagline {
+            color: #7f8c8d;
+            font-size: 1.2rem;
+            font-weight: 500;
+        }
+        
+        .main-content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .list-container {
+            flex: 1;
+            min-width: 350px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            padding: 30px;
+            transition: transform 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .list-container:hover {
+            transform: translateY(-5px);
+        }
+        
+        .list-container.left::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #ff6b6b, #ff8e8e);
+        }
+        
+        .list-container.right::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #4ecdc4, #45b7d1);
+        }
+        
+        .list-title {
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .list-title h2 {
+            color: #2c3e50;
+            font-size: 1.8rem;
+        }
+        
+        .icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: white;
+        }
+        
+        .icon.left {
+            background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
+        }
+        
+        .icon.right {
+            background: linear-gradient(135deg, #4ecdc4, #45b7d1);
+        }
+        
+        textarea {
+            width: 100%;
+            height: 320px;
+            padding: 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 15px;
+            font-size: 1rem;
+            resize: vertical;
+            transition: all 0.3s ease;
+            line-height: 1.6;
+            background: #f8f9fa;
+            color: #2c3e50;
+        }
+        
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            background: white;
+        }
+        
+        .counter {
+            margin-top: 15px;
+            font-size: 1rem;
+            color: #7f8c8d;
+            text-align: right;
+            font-weight: 600;
+        }
+        
+        .counter span {
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+        
+        .counter .left-count {
+            color: #ff6b6b;
+        }
+        
+        .counter .right-count {
+            color: #4ecdc4;
+        }
+        
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            margin: 40px 0;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            padding: 18px 45px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        button::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+        
+        button:hover::after {
+            left: 100%;
+        }
+        
+        #compareBtn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        #compareBtn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(102, 126, 234, 0.4);
+        }
+        
+        #resetBtn {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+        
+        #resetBtn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(245, 87, 108, 0.4);
+        }
+        
+        #saveBtn {
+            background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
+            color: white;
+        }
+        
+        #saveBtn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(76, 175, 80, 0.4);
+        }
+        
+        .button-icon {
+            font-size: 1.4rem;
+        }
+        
+        .results-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            padding: 40px;
+            margin-top: 20px;
+            margin-bottom: 40px;
+        }
+        
+        .results-title {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .results-title h2 {
+            color: #2c3e50;
+            font-size: 2.2rem;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .result-box {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            min-height: 280px;
+        }
+        
+        .result-box:hover {
+            transform: translateY(-5px);
+        }
+        
+        .result-box.left-only::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #ff6b6b, #ff8e8e);
+        }
+        
+        .result-box.right-only::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #4ecdc4, #45b7d1);
+        }
+        
+        .result-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        
+        .result-header h3 {
+            color: #2c3e50;
+            font-size: 1.6rem;
+        }
+        
+        .result-count {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        .result-list {
+            max-height: 350px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+        
+        .result-item {
+            padding: 15px 20px;
+            margin-bottom: 12px;
+            border-radius: 10px;
+            background: #f8f9fa;
+            color: #2c3e50;
+            font-weight: 600;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transition: all 0.3s ease;
+            border-left: 4px solid;
+        }
+        
+        .result-item:hover {
+            transform: translateX(5px);
+            background: white;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .result-item.left-item {
+            border-left-color: #ff6b6b;
+            background: linear-gradient(90deg, rgba(255, 107, 107, 0.1), #f8f9fa);
+        }
+        
+        .result-item.right-item {
+            border-left-color: #4ecdc4;
+            background: linear-gradient(90deg, rgba(78, 205, 196, 0.1), #f8f9fa);
+        }
+        
+        .stock-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            flex-shrink: 0;
+        }
+        
+        .stock-icon.left {
+            background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
+        }
+        
+        .stock-icon.right {
+            background: linear-gradient(135deg, #4ecdc4, #45b7d1);
+        }
+        
+        .empty-state {
+            padding: 40px 20px;
+            text-align: center;
+            color: #95a5a6;
+            font-style: italic;
+            font-size: 1.1rem;
+        }
+        
+        .empty-state .icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+        
+        /* Saved Results Section */
+        .saved-results-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            padding: 40px;
+            margin-top: 20px;
+        }
+        
+        .saved-results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .saved-results-header h2 {
+            color: #2c3e50;
+            font-size: 2.2rem;
+            background: linear-gradient(90deg, #FF9800, #FF5722);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        #clearAllBtn {
+            background: linear-gradient(135deg, #FF5722 0%, #D32F2F 100%);
+            color: white;
+            padding: 12px 30px;
+            font-size: 1rem;
+        }
+        
+        #clearAllBtn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(255, 87, 34, 0.4);
+        }
+        
+        .saved-results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 25px;
+        }
+        
+        .saved-result-item {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            border-left: 5px solid #FF9800;
+            position: relative;
+        }
+        
+        .saved-result-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+        
+        .saved-result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .saved-result-title {
+            font-size: 1.4rem;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+        
+        .saved-result-date {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            background: #f5f5f5;
+            padding: 5px 12px;
+            border-radius: 20px;
+        }
+        
+        .saved-result-content {
+            margin-bottom: 20px;
+        }
+        
+        .saved-result-stats {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .saved-stat {
+            background: #f8f9fa;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .saved-stat.left {
+            border-left: 3px solid #ff6b6b;
+        }
+        
+        .saved-stat.right {
+            border-left: 3px solid #4ecdc4;
+        }
+        
+        .saved-stock-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .saved-stock-item {
+            background: #f0f7ff;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .saved-stock-item.left {
+            background: rgba(255, 107, 107, 0.1);
+            border-left: 3px solid #ff6b6b;
+        }
+        
+        .saved-stock-item.right {
+            background: rgba(78, 205, 196, 0.1);
+            border-left: 3px solid #4ecdc4;
+        }
+        
+        .saved-result-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        
+        .saved-action-btn {
+            padding: 8px 20px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .delete-btn {
+            background: linear-gradient(135deg, #ff6b6b, #ff4757);
+            color: white;
+        }
+        
+        .delete-btn:hover {
+            background: linear-gradient(135deg, #ff4757, #ff3838);
+            transform: translateY(-2px);
+        }
+        
+        .load-btn {
+            background: linear-gradient(135deg, #45b7d1, #4ecdc4);
+            color: white;
+        }
+        
+        .load-btn:hover {
+            background: linear-gradient(135deg, #4ecdc4, #45b7d1);
+            transform: translateY(-2px);
+        }
+        
+        .no-saved-results {
+            text-align: center;
+            padding: 60px 20px;
+            color: #95a5a6;
+        }
+        
+        .no-saved-results .icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            opacity: 0.5;
+            color: #FF9800;
+        }
+        
+        .no-saved-results p {
+            font-size: 1.2rem;
+            font-style: italic;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .results-grid, .saved-results-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            button {
+                padding: 15px 30px;
+                font-size: 1rem;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .action-buttons button {
+                width: 100%;
+                max-width: 300px;
+                justify-content: center;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-chart-line"></i> Stock Comparison Tool</h1>
+            <p class="tagline">Compare two stock lists, save results permanently, and manage them</p>
+        </header>
+        
+        <div class="main-content">
+            <div class="list-container left">
+                <div class="list-title">
+                    <div class="icon left">
+                        <i class="fas fa-arrow-trend-up"></i>
+                    </div>
+                    <h2>Portfolio A</h2>
+                </div>
+                <textarea id="leftTextarea" placeholder="Enter stock symbols or company names, one per line&#10;Example:&#10;AAPL&#10;GOOGL&#10;MSFT&#10;TSLA&#10;AMZN"></textarea>
+                <div class="counter">Stocks Count: <span class="left-count" id="leftCount">0</span></div>
+            </div>
+            
+            <div class="list-container right">
+                <div class="list-title">
+                    <div class="icon right">
+                        <i class="fas fa-chart-pie"></i>
+                    </div>
+                    <h2>Portfolio B</h2>
+                </div>
+                <textarea id="rightTextarea" placeholder="Enter stock symbols or company names, one per line&#10;Example:&#10;AAPL&#10;NVDA&#10;MSFT&#10;FB&#10;NFLX"></textarea>
+                <div class="counter">Stocks Count: <span class="right-count" id="rightCount">0</span></div>
+            </div>
+        </div>
+        
+        <div class="action-buttons">
+            <button id="compareBtn">
+                <span class="button-icon"><i class="fas fa-balance-scale"></i></span>
+                <span>Compare Stocks</span>
+            </button>
+            <button id="saveBtn">
+                <span class="button-icon"><i class="fas fa-save"></i></span>
+                <span>Save Results</span>
+            </button>
+            <button id="resetBtn">
+                <span class="button-icon"><i class="fas fa-redo"></i></span>
+                <span>Reset All</span>
+            </button>
+        </div>
+        
+        <div class="results-container">
+            <div class="results-title">
+                <h2>Current Comparison Results</h2>
+            </div>
+            
+            <div class="results-grid">
+                <div class="result-box left-only">
+                    <div class="result-header">
+                        <h3>Only in Portfolio A</h3>
+                        <div class="result-count" id="leftOnlyCount">0</div>
+                    </div>
+                    <div class="result-list" id="leftOnlyResults">
+                        <div class="empty-state">
+                            <div class="icon left"><i class="fas fa-search"></i></div>
+                            <p>Unique stocks from Portfolio A will appear here after comparison</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="result-box right-only">
+                    <div class="result-header">
+                        <h3>Only in Portfolio B</h3>
+                        <div class="result-count" id="rightOnlyCount">0</div>
+                    </div>
+                    <div class="result-list" id="rightOnlyResults">
+                        <div class="empty-state">
+                            <div class="icon right"><i class="fas fa-search"></i></div>
+                            <p>Unique stocks from Portfolio B will appear here after comparison</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="saved-results-container">
+            <div class="saved-results-header">
+                <h2><i class="fas fa-archive"></i> Saved Comparison Results</h2>
+                <button id="clearAllBtn">
+                    <span class="button-icon"><i class="fas fa-trash-alt"></i></span>
+                    <span>Clear All Saved</span>
+                </button>
+            </div>
+            
+            <div class="saved-results-grid" id="savedResultsContainer">
+                <div class="no-saved-results">
+                    <div class="icon"><i class="fas fa-box-open"></i></div>
+                    <p>No saved results yet. Compare stocks and click "Save Results" to save them here.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const leftTextarea = document.getElementById('leftTextarea');
+            const rightTextarea = document.getElementById('rightTextarea');
+            const compareBtn = document.getElementById('compareBtn');
+            const resetBtn = document.getElementById('resetBtn');
+            const saveBtn = document.getElementById('saveBtn');
+            const clearAllBtn = document.getElementById('clearAllBtn');
+            const leftCount = document.getElementById('leftCount');
+            const rightCount = document.getElementById('rightCount');
+            
+            const leftOnlyResults = document.getElementById('leftOnlyResults');
+            const rightOnlyResults = document.getElementById('rightOnlyResults');
+            
+            const leftOnlyCount = document.getElementById('leftOnlyCount');
+            const rightOnlyCount = document.getElementById('rightOnlyCount');
+            
+            const savedResultsContainer = document.getElementById('savedResultsContainer');
+            
+            // Current comparison results
+            let currentResults = {
+                leftOnly: [],
+                rightOnly: [],
+                leftAll: [],
+                rightAll: [],
+                timestamp: null
+            };
+            
+            // Load saved results from localStorage
+            let savedResults = JSON.parse(localStorage.getItem('stockComparisonSavedResults')) || [];
+            
+            // Initialize the page
+            function init() {
+                updateCounters();
+                loadSavedResults();
+                addSampleData();
+            }
+            
+            // Update counter for a specific textarea
+            function updateCounter(textarea, counterElement) {
+                const text = textarea.value.trim();
+                const count = text ? text.split('\n').filter(line => line.trim() !== '').length : 0;
+                counterElement.textContent = count;
+            }
+            
+            // Update all counters
+            function updateCounters() {
+                updateCounter(leftTextarea, leftCount);
+                updateCounter(rightTextarea, rightCount);
+            }
+            
+            // Parse textarea content into an array of stock symbols
+            function parseStocks(text) {
+                return text
+                    .split('\n')
+                    .map(stock => stock.trim().toUpperCase())
+                    .filter(stock => stock !== '');
+            }
+            
+            // Compare the two stock lists
+            function compareLists() {
+                // Get all stocks from Portfolio A
+                const leftStocks = parseStocks(leftTextarea.value);
+                const leftOriginalStocks = leftTextarea.value
+                    .split('\n')
+                    .map(stock => stock.trim())
+                    .filter(stock => stock !== '');
+                
+                // Get all stocks from Portfolio B
+                const rightStocks = parseStocks(rightTextarea.value);
+                const rightOriginalStocks = rightTextarea.value
+                    .split('\n')
+                    .map(stock => stock.trim())
+                    .filter(stock => stock !== '');
+                
+                // Find stocks only in Portfolio A (case-insensitive comparison)
+                const onlyInLeft = [];
+                leftOriginalStocks.forEach((originalStock, index) => {
+                    if (!rightStocks.includes(originalStock.toUpperCase())) {
+                        onlyInLeft.push(originalStock);
+                    }
+                });
+                
+                // Find stocks only in Portfolio B
+                const onlyInRight = [];
+                rightOriginalStocks.forEach((originalStock, index) => {
+                    if (!leftStocks.includes(originalStock.toUpperCase())) {
+                        onlyInRight.push(originalStock);
+                    }
+                });
+                
+                // Store current results
+                currentResults = {
+                    leftOnly: [...onlyInLeft],
+                    rightOnly: [...onlyInRight],
+                    leftAll: [...leftOriginalStocks],
+                    rightAll: [...rightOriginalStocks],
+                    timestamp: new Date().toISOString()
+                };
+                
+                // Display results
+                displayResults(onlyInLeft, onlyInRight);
+            }
+            
+            // Display comparison results
+            function displayResults(onlyInLeft, onlyInRight) {
+                // Update counts
+                leftOnlyCount.textContent = onlyInLeft.length;
+                rightOnlyCount.textContent = onlyInRight.length;
+                
+                // Display stocks only in Portfolio A
+                if (onlyInLeft.length > 0) {
+                    leftOnlyResults.innerHTML = '';
+                    onlyInLeft.forEach(stock => {
+                        const resultItem = document.createElement('div');
+                        resultItem.className = 'result-item left-item';
+                        resultItem.innerHTML = `
+                            <div class="stock-icon left">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <span>${stock}</span>
+                        `;
+                        leftOnlyResults.appendChild(resultItem);
+                    });
+                } else {
+                    leftOnlyResults.innerHTML = `
+                        <div class="empty-state">
+                            <div class="icon left"><i class="fas fa-check-circle"></i></div>
+                            <p>All stocks in Portfolio A are also in Portfolio B</p>
+                        </div>
+                    `;
+                }
+                
+                // Display stocks only in Portfolio B
+                if (onlyInRight.length > 0) {
+                    rightOnlyResults.innerHTML = '';
+                    onlyInRight.forEach(stock => {
+                        const resultItem = document.createElement('div');
+                        resultItem.className = 'result-item right-item';
+                        resultItem.innerHTML = `
+                            <div class="stock-icon right">
+                                <i class="fas fa-chart-pie"></i>
+                            </div>
+                            <span>${stock}</span>
+                        `;
+                        rightOnlyResults.appendChild(resultItem);
+                    });
+                } else {
+                    rightOnlyResults.innerHTML = `
+                        <div class="empty-state">
+                            <div class="icon right"><i class="fas fa-check-circle"></i></div>
+                            <p>All stocks in Portfolio B are also in Portfolio A</p>
+                        </div>
+                    `;
+                }
+            }
+            
+            // Save current results to localStorage
+            function saveResults() {
+                if (currentResults.leftOnly.length === 0 && currentResults.rightOnly.length === 0) {
+                    alert('Please compare stocks first before saving results.');
+                    return;
+                }
+                
+                const resultName = prompt('Enter a name for this comparison:', 
+                    `Stock Comparison ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`);
+                
+                if (!resultName || resultName.trim() === '') return;
+                
+                const resultToSave = {
+                    id: Date.now().toString(),
+                    name: resultName.trim(),
+                    timestamp: currentResults.timestamp,
+                    leftOnly: [...currentResults.leftOnly],
+                    rightOnly: [...currentResults.rightOnly],
+                    leftAll: [...currentResults.leftAll],
+                    rightAll: [...currentResults.rightAll],
+                    date: new Date().toLocaleString()
+                };
+                
+                savedResults.unshift(resultToSave); // Add to beginning
+                localStorage.setItem('stockComparisonSavedResults', JSON.stringify(savedResults));
+                
+                loadSavedResults();
+                alert('Results saved successfully!');
+            }
+            
+            // Load saved results from localStorage
+            function loadSavedResults() {
+                if (savedResults.length === 0) {
+                    savedResultsContainer.innerHTML = `
+                        <div class="no-saved-results">
+                            <div class="icon"><i class="fas fa-box-open"></i></div>
+                            <p>No saved results yet. Compare stocks and click "Save Results" to save them here.</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                savedResultsContainer.innerHTML = '';
+                
+                savedResults.forEach(result => {
+                    const savedItem = document.createElement('div');
+                    savedItem.className = 'saved-result-item';
+                    savedItem.dataset.id = result.id;
+                    
+                    savedItem.innerHTML = `
+                        <div class="saved-result-header">
+                            <div class="saved-result-title">${result.name}</div>
+                            <div class="saved-result-date">${result.date}</div>
+                        </div>
+                        
+                        <div class="saved-result-content">
+                            <div class="saved-result-stats">
+                                <div class="saved-stat left">
+                                    <i class="fas fa-arrow-trend-up"></i>
+                                    <span>Only in A: ${result.leftOnly.length}</span>
+                                </div>
+                                <div class="saved-stat right">
+                                    <i class="fas fa-chart-pie"></i>
+                                    <span>Only in B: ${result.rightOnly.length}</span>
+                                </div>
+                            </div>
+                            
+                            <div class="saved-stock-list">
+                                ${result.leftOnly.slice(0, 5).map(stock => `
+                                    <div class="saved-stock-item left">
+                                        <i class="fas fa-chart-line"></i>
+                                        ${stock}
+                                    </div>
+                                `).join('')}
+                                
+                                ${result.rightOnly.slice(0, 5).map(stock => `
+                                    <div class="saved-stock-item right">
+                                        <i class="fas fa-chart-pie"></i>
+                                        ${stock}
+                                    </div>
+                                `).join('')}
+                                
+                                ${(result.leftOnly.length > 5 || result.rightOnly.length > 5) ? 
+                                    `<div class="saved-stock-item" style="background: #f5f5f5; color: #7f8c8d;">
+                                        <i class="fas fa-ellipsis-h"></i>
+                                        ${result.leftOnly.length + result.rightOnly.length - 10 > 0 ? 
+                                            `${result.leftOnly.length + result.rightOnly.length - 10} more stocks` : 
+                                            'More stocks'}
+                                    </div>` : ''
+                                }
+                            </div>
+                        </div>
+                        
+                        <div class="saved-result-actions">
+                            <button class="saved-action-btn load-btn" data-action="load" data-id="${result.id}">
+                                <i class="fas fa-upload"></i> Load
+                            </button>
+                            <button class="saved-action-btn delete-btn" data-action="delete" data-id="${result.id}">
+                                <i class="fas fa-trash-alt"></i> Delete
+                            </button>
+                        </div>
+                    `;
+                    
+                    savedResultsContainer.appendChild(savedItem);
+                });
+            }
+            
+            // Delete a saved result
+            function deleteResult(id) {
+                if (confirm('Are you sure you want to delete this saved result? This action cannot be undone.')) {
+                    savedResults = savedResults.filter(result => result.id !== id);
+                    localStorage.setItem('stockComparisonSavedResults', JSON.stringify(savedResults));
+                    loadSavedResults();
+                }
+            }
+            
+            // Load a saved result into the comparison tool
+            function loadResult(id) {
+                const result = savedResults.find(r => r.id === id);
+                if (!result) return;
+                
+                leftTextarea.value = result.leftAll.join('\n');
+                rightTextarea.value = result.rightAll.join('\n');
+                
+                updateCounters();
+                
+                // Update current results
+                currentResults = {
+                    leftOnly: [...result.leftOnly],
+                    rightOnly: [...result.rightOnly],
+                    leftAll: [...result.leftAll],
+                    rightAll: [...result.rightAll],
+                    timestamp: result.timestamp
+                };
+                
+                // Display the loaded results
+                displayResults(result.leftOnly, result.rightOnly);
+                
+                // Scroll to the comparison results
+                document.querySelector('.results-container').scrollIntoView({ behavior: 'smooth' });
+                
+                alert('Results loaded successfully!');
+            }
+            
+            // Clear all saved results
+            function clearAllResults() {
+                if (savedResults.length === 0) {
+                    alert('No saved results to clear.');
+                    return;
+                }
+                
+                if (confirm('Are you sure you want to delete ALL saved results? This action cannot be undone.')) {
+                    savedResults = [];
+                    localStorage.removeItem('stockComparisonSavedResults');
+                    loadSavedResults();
+                    alert('All saved results have been deleted.');
+                }
+            }
+            
+            // Reset all inputs and results
+            function resetAll() {
+                // Clear all textareas
+                leftTextarea.value = '';
+                rightTextarea.value = '';
+                
+                // Reset counters
+                updateCounters();
+                
+                // Clear current results
+                currentResults = {
+                    leftOnly: [],
+                    rightOnly: [],
+                    leftAll: [],
+                    rightAll: [],
+                    timestamp: null
+                };
+                
+                // Clear results display
+                leftOnlyResults.innerHTML = `
+                    <div class="empty-state">
+                        <div class="icon left"><i class="fas fa-search"></i></div>
+                        <p>Unique stocks from Portfolio A will appear here after comparison</p>
+                    </div>
+                `;
+                rightOnlyResults.innerHTML = `
+                    <div class="empty-state">
+                        <div class="icon right"><i class="fas fa-search"></i></div>
+                        <p>Unique stocks from Portfolio B will appear here after comparison</p>
+                    </div>
+                `;
+                
+                // Reset result counts
+                leftOnlyCount.textContent = '0';
+                rightOnlyCount.textContent = '0';
+            }
+            
+            // Add sample stock data for demonstration
+            function addSampleData() {
+                // Portfolio A examples
+                const portfolioA = [
+                    "AAPL",
+                    "GOOGL",
+                    "MSFT",
+                    "TSLA",
+                    "AMZN",
+                    "NVDA",
+                    "META",
+                    "JPM",
+                    "V",
+                    "WMT"
+                ];
+                
+                // Portfolio B examples (some overlapping, some different)
+                const portfolioB = [
+                    "AAPL",
+                    "MSFT",
+                    "NVDA",
+                    "FB",
+                    "NFLX",
+                    "AMD",
+                    "INTC",
+                    "DIS",
+                    "BAC",
+                    "PYPL"
+                ];
+                
+                // Fill textareas
+                leftTextarea.value = portfolioA.join('\n');
+                rightTextarea.value = portfolioB.join('\n');
+                
+                // Update counters
+                updateCounters();
+                
+                // Auto compare after adding sample data
+                setTimeout(compareLists, 100);
+            }
+            
+            // Event delegation for saved results actions
+            savedResultsContainer.addEventListener('click', function(e) {
+                const button = e.target.closest('.saved-action-btn');
+                if (!button) return;
+                
+                const action = button.dataset.action;
+                const id = button.dataset.id;
+                
+                if (action === 'delete') {
+                    deleteResult(id);
+                } else if (action === 'load') {
+                    loadResult(id);
+                }
+            });
+            
+            // Add event listeners
+            compareBtn.addEventListener('click', compareLists);
+            resetBtn.addEventListener('click', resetAll);
+            saveBtn.addEventListener('click', saveResults);
+            clearAllBtn.addEventListener('click', clearAllResults);
+            
+            // Add input event listeners to update counters
+            leftTextarea.addEventListener('input', updateCounters);
+            rightTextarea.addEventListener('input', updateCounters);
+            
+            // Add keyboard shortcut (Ctrl+Enter to compare)
+            document.addEventListener('keydown', function(e) {
+                if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                    compareLists();
+                }
+            });
+            
+            // Initialize the application
+            init();
+        });
+    </script>
+</body>
+</html>
